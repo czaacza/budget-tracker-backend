@@ -62,14 +62,17 @@ exports.getUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, image } = req.body;
     const user = await UserSchema.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    user.username = username;
-    user.email = email;
-    user.password = password;
+    // if there is no variable, then use the existing value
+    user.username = username || user.username;
+    user.email = email || user.email;
+    user.password = password || user.password;
+    user.image = image || user.image;
+
     await user.save();
     res.status(200).json({ message: 'User updated successfully' });
   } catch (error) {
